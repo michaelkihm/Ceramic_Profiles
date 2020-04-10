@@ -7,13 +7,15 @@ class FourierDescriptorBase:
     """
     Base class to construct Fourier descriptor of given binary images \n
     @param list of filenames or list of images
+    @param normalize set if Fourier descriptors should be normalized
     @param number of fourier descriptor (FD) harmonics -> FD[-m_n, -m_n-1, ...-m_1, m_0, m_1, ...., m_n-1, m_n ] for n harmonics
     """
 
-    def __init__(self, images: List, descriptor_harmonics: int):
+    def __init__(self, images: List, descriptor_harmonics: int, normalize:bool = True):
         self.descriptors = []
         self.contours = []
         self.descriptor_harmonics = descriptor_harmonics
+        self._normalize = normalize
         if isinstance(images[0], str):
             self.images = [cv.imread(image, cv.IMREAD_GRAYSCALE)
                            for image in images]
@@ -26,8 +28,11 @@ class FourierDescriptorBase:
                 self.detectOutlineContour(image.astype('uint8')))
             unnormalized_descriptor = self.makeFourierDescriptorFromPolygon(
                 self.contours[-1][:, 0], self.contours[-1][:, 1], self.descriptor_harmonics)
-            self.descriptors.append(
-                self.normalizeDescriptor(unnormalized_descriptor))
+            if self._normalize:
+                self.descriptors.append(
+                    self.normalizeDescriptor(unnormalized_descriptor))
+            else:
+                self.descriptors.append(unnormalized_descriptor)
 
         self.descriptors = np.array(self.descriptors)
         return self.descriptors
