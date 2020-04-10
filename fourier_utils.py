@@ -1,34 +1,7 @@
 import matplotlib.pyplot as plt
 import numpy as np
 import cv2 as cv
-
-
-def reconstruct_fourier_descriptor(fourier_descriptor: np.ndarray):
-    """
-    Reconstracts the shape from a Fourier Descriptor.
-    Only temp version
-    """
-    contour_reconstruct = np.fft.ifft(fourier_descriptor)
-    contour_reconstruct = np.array(
-        [contour_reconstruct.real, contour_reconstruct.imag])
-    contour_reconstruct = np.transpose(contour_reconstruct)
-    contour_reconstruct = np.expand_dims(contour_reconstruct, axis=1)
-    # make positive
-    if contour_reconstruct.min() < 0:
-        contour_reconstruct -= contour_reconstruct.min()
-    # normalization
-    contour_reconstruct *= 800 / contour_reconstruct.max()
-    # type cast to int32
-    contour_reconstruct = contour_reconstruct.astype(np.int32, copy=False)
-    black = np.zeros((800, 800, 3), np.uint8)
-    # draw
-    for i in range(len(contour_reconstruct)-1):
-        cv.line(black, tuple(contour_reconstruct[i, 0, :]), tuple(
-            contour_reconstruct[i+1, 0, :]), (0, 255, 0), thickness=1)
-
-    # save image
-    cv.imwrite("reconstruct_result_funtion.jpg", black)
-
+from typing import Tuple
 
 def plot_fourier_spectrum(fourier_descriptor):
     """
@@ -51,3 +24,64 @@ def truncate_descriptor(fourier_descriptor, new_length):
     fourier_descriptor = fourier_descriptor[
         center_index - new_length // 2:center_index + new_length // 2]
     return np.fft.ifftshift(fourier_descriptor)
+
+def draw_reconsturcted_descriptor(descriptor:np.ndarray, cont_points:int, image_shape:Tuple=(200,400), image:np.ndarray=None):
+    """
+    @brief Returns shape of reconstructed Fourier Descriptor. FD is either drawn in given image or is drawn in black image with given shape.
+    @remark Given FD should not be normalized
+    @param descriptor: Numpy array with Fourier descriptor
+    @param cont_point: Number of points of the reconstructed contour
+    @param image_shape: 2d tuple with shape of image to in which reconstructed FD will be drawn. Only used of no image is given
+    @param image: Image in which reconstructed FD will be drawan
+    """
+    contour_reconstruct = reconstruct_fourier_descriptor(descriptor, cont_points)
+    contour_reconstruct = contour_reconstruct.astype(np.int)
+    contour_reconstruct = np.expand_dims(contour_reconstruct, axis=1)
+    
+    if image is None:
+        img = np.zeros((*image_shape, 3), np.float)
+    else:
+        img = cv.cvtColor(image.astype(np.uint8),cv.COLOR_GRAY2RGB)
+
+    # draw
+    for i in range(len(contour_reconstruct)-1):
+        cv.line(img, tuple(contour_reconstruct[i, 0, :]), tuple(
+            contour_reconstruct[i+1, 0, :]), (0, 255, 0), thickness=2)
+    
+    return img
+
+
+def reconstruct_fourier_descriptor(descriptor:np.ndarray, cont_points:int ):
+    """
+    @brief Reconstructs uniform Fourier descriptor with N contour points
+    @param descriptor: Uniform FD
+    @param cont_points: Number of points of the reconstructed contour
+    """
+    recon_descriptor = np.zeros((cont_points,2))
+    for  i  in range(cont_points):
+        t =  float(i) / cont_points
+        recon_descriptor[i] = get_reconstruction_of_fourier_descriptor_point(descriptor,t)
+
+    return recon_descriptor
+
+def get_reconstruction_of_fourier_descriptor_point(descriptor:np.ndarray,coefficient:int):
+    """
+    @brief  Reconstruct x and y coordinates of given Fourier coefficient. Helper function for
+            reconstruct_fourier_descriptor      
+    @param descriptor: FD descriptor array
+    @param coefficient: FD coefficient
+    """
+    harmonics = (len(descriptor) - 1) // 2
+    harmonics_min = harmonics*-1
+    
+    x = 0.0
+    y = 0.0
+
+    for m in range(harmonics_min,harmonics+1):
+        A = descriptor[m].real
+        B = descriptor[m].imag
+        phi = 2*np.pi*m*coefficient
+        x += A * np.cos(phi) - B*np.sin(phi)
+        y += A * np.sin(phi) + B*np.cos(phi)
+
+    return x, y
