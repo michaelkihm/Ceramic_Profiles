@@ -3,7 +3,7 @@ from typing import List, Tuple
 from scipy.ndimage import label
 import numpy as np 
 import cv2 as cv 
-
+from abc import ABCMeta,abstractmethod
 
 
 class CeramicsPreprocessorBase:
@@ -15,8 +15,9 @@ class CeramicsPreprocessorBase:
         self.image_path_list = []
         self.file_endings = file_endings
 
+    @abstractmethod
     def run(self) ->Tuple:
-        raise NotImplementedError
+        pass
 
     def createImagePathList(self, dir_name: str, file_endings: List) ->List:
         """ returns a list of filenames in given directory and sub directories. 

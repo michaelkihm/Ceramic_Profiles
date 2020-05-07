@@ -1,9 +1,10 @@
 import numpy as np
 import cv2 as cv
 from typing import List
+from abc import ABCMeta, abstractmethod
 
 
-class FourierDescriptorBase:
+class FourierDescriptorBase(metaclass=ABCMeta):
     """
     Base class to construct Fourier descriptor of given binary images \n
     @param list of filenames or list of images
@@ -50,13 +51,9 @@ class FourierDescriptorBase:
         contour_complex.imag = contour[:, 1]
         return np.fft.fft(contour_complex)
 
+    @abstractmethod
     def normalizeDescriptor(self, descriptor: np.ndarray) -> np.ndarray:
-        # descriptor[0]=0 #translation invariant
-        # scale invariant
-        #descriptor /= descriptor[-1 if np.abs(descriptor[0]) < np.abs(descriptor[-1]) else 0]
-        # rotation and mirror invariant
-        # return np.abs(descriptor)
-        raise NotImplementedError
+        pass
 
     def getLargestContour(self, contours: List) -> np.ndarray:
         """ Returns the largest contour of a list of contours. 
