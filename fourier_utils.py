@@ -25,7 +25,7 @@ def truncate_descriptor(fourier_descriptor, new_length):
         center_index - new_length // 2:center_index + new_length // 2]
     return np.fft.ifftshift(fourier_descriptor)
 
-def draw_reconsturcted_descriptor(descriptor:np.ndarray, cont_points:int, image_shape:Tuple=(200,400), image:np.ndarray=None):
+def draw_reconsturcted_descriptor(descriptor:np.ndarray, cont_points:int, image_shape:Tuple=(200,400), image:np.ndarray=None,thickness:int=2):
     """
     @brief Returns shape of reconstructed Fourier Descriptor. FD is either drawn in given image or is drawn in black image with given shape.
     @remark Given FD should not be normalized
@@ -46,7 +46,7 @@ def draw_reconsturcted_descriptor(descriptor:np.ndarray, cont_points:int, image_
     # draw
     for i in range(len(contour_reconstruct)-1):
         cv.line(img, tuple(contour_reconstruct[i, 0, :]), tuple(
-            contour_reconstruct[i+1, 0, :]), (0, 255, 0), thickness=2)
+            contour_reconstruct[i+1, 0, :]), (0, 255, 0), thickness=thickness)
     
     return img
 
