@@ -6,7 +6,7 @@ import cv2 as cv
 from abc import ABCMeta,abstractmethod
 
 
-class CeramicsPreprocessorBase:
+class CeramicsPreprocessorBase(metaclass=ABCMeta):
     """
     Base class to import and preprocess the ceramics images
     """
