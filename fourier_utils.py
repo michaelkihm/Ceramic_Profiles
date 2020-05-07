@@ -85,3 +85,21 @@ def get_reconstruction_of_fourier_descriptor_point(descriptor:np.ndarray,coeffic
         y += A * np.sin(phi) + B*np.cos(phi)
 
     return x, y
+
+
+def phase_descriptor_distance(g1:np.ndarray, g2:np.ndarray) ->float:
+    g1_0 = g1[0:len(g1)//2]
+    g2_0 = g2[0:len(g1)//2]
+    g2_1 = g2[len(g1)//2:]
+    assert len(g2_0) == len(g2_1)
+    return min( complex_descriptor_distance(g1_0,g2_0), complex_descriptor_distance(g1_0, g2_1) )
+
+def complex_descriptor_distance(g1:np.ndarray, g2:np.ndarray) ->float:
+    s = 0
+    for m in range( len(g1)//2 ):
+        s += np.power(g1[m] - g2[m],2) + np.power(g1[m+len(g1)//2] - g2[m+len(g1)//2],2)
+    
+    return np.sqrt(s)
+
+
+    
