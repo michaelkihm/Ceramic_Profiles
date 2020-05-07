@@ -1,0 +1,16 @@
+version: '3.5'
+
+services:
+  shape_knn:
+    container_name: knn_shapes
+    build:
+      context: Docker/
+      network: host
+    ports: 
+      - '8888:8888' #for jupyter notebook
+    volumes:
+      - ./:/home/Code/
+      - /home/michael/Desktop/test:/home/michael/Desktop/test/
+      - /home/michael/Desktop/binary masks/images/:/home/michael/Desktop/binary masks/images/
+      - /home/michael/Desktop/binary masks/masks/:/home/michael/Desktop/binary masks/masks/
+    working_dir: /home/Code
