@@ -1,8 +1,8 @@
 version: '3.5'
 
 services:
-  shape_knn:
-    container_name: knn_shapes
+  ceramics_shape:
+    container_name: ceramics_shape
     build:
       context: Docker/
       network: host
@@ -13,4 +13,14 @@ services:
       - /home/michael/Desktop/test:/home/michael/Desktop/test/
       - /home/michael/Desktop/binary masks/images/:/home/michael/Desktop/binary masks/images/
       - /home/michael/Desktop/binary masks/masks/:/home/michael/Desktop/binary masks/masks/
+      - /home/michael/Downloads/miningshapes_cleaned/:/home/images/miningshapes_cleaned
+      - /home/michael/Desktop/Binaries/:/home/images/Binaries
+      #vscode extensions
+      - ./vscode_remote/extensions/:/home/michael/.vscode-server/extensions/
+      - ./vscode_remote/insiders/:/home/michael/.vscode-server-insiders/extensions/
+      #vscode bash history
+      - ./vscode_remote/bashhistory:/commandhistory
     working_dir: /home/Code
+    user: 1000:1000
+    tty: true
+
