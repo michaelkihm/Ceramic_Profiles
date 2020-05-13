@@ -1,6 +1,8 @@
 .vscode/**
 __pycache__/**
 vscode_remote/**
+.ipynb_checkpoints/**
+saved_arrays/**
 
 *.pyc
 *.jpg
