@@ -40,7 +40,7 @@ class CeramicsPreprocessorBase(metaclass=ABCMeta):
         _, thr_img = cv.threshold(blur, 0, 255, cv.THRESH_BINARY_INV+cv.THRESH_OTSU)
         return thr_img
 
-    def erodeImage(self, image: np.ndarray, kernel_size: Tuple, iterations: int) ->np.ndarray:
+    def erodeImage(self, image: np.ndarray, kernel_size: Tuple=(4,4), iterations: int=2) ->np.ndarray:
         kernel = np.ones(kernel_size, np.uint8)
         return cv.erode(image, kernel, iterations=iterations)
 
