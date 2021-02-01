@@ -62,7 +62,7 @@ class Curvature:
         @param contour contour array to be sorted by the function
         """
         cont = contour.astype(np.int)
-        sort = sorted(cont, key=lambda x: x[1])
+        sort = sorted(cont, key=lambda x: (x[1],x[0]))
         index = np.where((cont[:, 0] == sort[0][0]) &
                          (cont[:, 1] == sort[0][1]))[0]
         out = np.roll(cont, -index, axis=0)
